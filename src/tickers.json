@@ -1,0 +1,46 @@
+tickers = {
+    'Small Modular Reactor (SMR) developers': {
+        'SMR': 'NuScale Power',
+        'OKLO': 'Oklo'
+    },
+    'Data Center Operators': {
+        'AMZN': 'Amazon.com Inc',
+        'GOOGL': 'Alphabet Inc (Google)', 
+        'MSFT': 'Microsoft Corporation'
+    },
+    'Carbon-Free Energy Producers': {
+        'CEG': 'Constellation Energy Corp',
+        'D': 'Dominion Energy',
+        'TLN': 'Talen Energy Corp'
+    },
+    'Semiconductor/Chip Manufacturers': {
+        'NVDA': 'NVIDIA Corporation'
+    },
+    'Energy/Sector ETFs': {
+        'SOXX': 'iShares Semiconductor ETF',
+        'VDE': 'Vanguard Energy ETF', 
+        'XLE': 'Energy Select Sector SPDR Fund',
+        'ICLN': 'iShares Global Clean Energy ETF',
+        'URA': 'Global X Uranium ETF',
+        'NLR': 'VanEck Uranium+Nuclear Energy ETF'
+    },
+    'Renewable Energy Companies': {
+        'GEV': 'Gevo Inc'
+    },
+    'Nuclear Technology Companies': {
+        'BWXT': 'BWX Technologies Inc'
+    },
+    'Uranium Companies': {
+        'CCJ': 'Cameco Corporation',
+        'UEC': 'Uranium Energy Corp'
+    },
+    'Japanese Electric Power Companies (Nuclear Operators)': {
+        '9501.T': 'Tokyo Electric Power Company Holdings',
+        '9503.T': 'Kansai Electric Power Co., Inc.',
+        '9508.T': 'Kyushu Electric Power Company, Incorporated',
+        '9507.T': 'Shikoku Electric Power Company, Incorporated', 
+        '9504.T': 'Chugoku Electric Power Company, Incorporated',
+        '9509.T': 'Hokkaido Electric Power Company, Incorporated'
+    }
+}
+
