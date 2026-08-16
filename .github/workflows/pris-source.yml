@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect PRIS reactor API strings
+      - name: Inspect PRIS reactor-units call site
         run: |
           python - <<'PY'
           import re
@@ -38,11 +38,35 @@ jobs:
               req = Request(script_url, headers={"User-Agent": "Mozilla/5.0"})
               with urlopen(req, timeout=60) as response:
                   js = response.read().decode("utf-8", errors="replace")
-              strings = re.findall(r'["\']([^"\']{2,180})["\']', js)
-              terms = ("reactor", "country", "plant", "npp", "status", "statistics")
-              candidates = sorted({s for s in strings if any(t in s.lower() for t in terms)})
-              for value in candidates[:400]:
-                  print("string", value)
+              needle = "/countrystatistics/reactor-units"
+              start = 0
+              while True:
+                  index = js.find(needle, start)
+                  if index < 0:
+                      break
+                  print("CALLSITE", js[max(0, index - 1200): index + 1200])
+                  start = index + len(needle)
+          PY
+      - name: Probe candidate PRIS endpoint
+        run: |
+          python - <<'PY'
+          from urllib.error import HTTPError
+          from urllib.request import Request, urlopen
+          urls = [
+              "https://pris.iaea.org/webapi/countrystatistics/reactor-units",
+              "https://pris.iaea.org/webapi/countrystatistics/reactor-units?countryCode=US",
+              "https://pris.iaea.org/webapi/countrystatistics/reactor-units?country=US",
+          ]
+          for url in urls:
+              try:
+                  req = Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+                  with urlopen(req, timeout=30) as response:
+                      body = response.read()
+                      print("PROBE", response.status, response.headers.get("content-type"), url, body[:2000])
+              except HTTPError as exc:
+                  print("PROBE", exc.code, exc.headers.get("content-type"), url, exc.read()[:1000])
+              except Exception as exc:
+                  print("PROBE_ERROR", url, repr(exc))
           PY
       - name: Compile current collector
         run: python -m py_compile src/collect_pris.py
