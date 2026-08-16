@@ -20,33 +20,28 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Extract PRIS API base URL
+      - name: Probe public PRIS reactor API
         run: |
           python - <<'PY'
-          import re
-          from urllib.parse import urljoin
+          import json
           from urllib.request import Request, urlopen
-          from src.collect_pris import fetch_country
 
-          raw, _ = fetch_country("US")
-          html = raw.decode("utf-8", errors="replace")
-          scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)', html, flags=re.I)
-          for src in scripts:
-              if "main" not in src.lower():
-                  continue
-              script_url = urljoin("https://pris-stats.iaea.org/", src)
-              req = Request(script_url, headers={"User-Agent": "Mozilla/5.0"})
+          base = "https://pris-stats.iaea.org"
+          headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+          for path in ("/country/countries/", "/reactor/reactors-by-code/US"):
+              req = Request(base + path, headers=headers)
               with urlopen(req, timeout=60) as response:
-                  js = response.read().decode("utf-8", errors="replace")
-              start = 0
-              hits = 0
-              while hits < 20:
-                  index = js.find("apiBaseUrl", start)
-                  if index < 0:
-                      break
-                  print("APIBASE", js[max(0, index - 1200): index + 1600])
-                  start = index + len("apiBaseUrl")
-                  hits += 1
+                  raw = response.read()
+                  print("API", response.status, response.headers.get("content-type"), path, raw[:5000])
+                  payload = json.loads(raw)
+                  if path.startswith("/reactor/"):
+                      items = payload.get("items") or []
+                      if items:
+                          reactor_id = items[0].get("id")
+                          req2 = Request(base + f"/reactor/reactor-by-id/{reactor_id}", headers=headers)
+                          with urlopen(req2, timeout=60) as response2:
+                              raw2 = response2.read()
+                              print("DETAIL", response2.status, raw2[:8000])
           PY
       - name: Compile current collector
         run: python -m py_compile src/collect_pris.py
