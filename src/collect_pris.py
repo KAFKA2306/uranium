@@ -1,125 +1,122 @@
 #!/usr/bin/env python3
-"""Collect reactor-level status from IAEA PRIS country pages."""
+"""Collect reactor-level status from the public IAEA PRIS JSON API."""
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import re
-from datetime import datetime, timezone
-from html.parser import HTMLParser
+from datetime import UTC, datetime
 from pathlib import Path
-from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-BASE = "https://pris.iaea.org/PRIS/CountryStatistics/CountryDetails.aspx"
+BASE = "https://pris-stats.iaea.org"
+COUNTRIES_PATH = "/country/countries/"
+REACTORS_PATH = "/reactor/reactors-by-code/{country_code}"
 
 
-class TableParser(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__()
-        self.in_cell = False
-        self.cell_parts: list[str] = []
-        self.row: list[str] = []
-        self.rows: list[list[str]] = []
-
-    def handle_starttag(self, tag: str, attrs) -> None:
-        if tag.lower() in {"td", "th"}:
-            self.in_cell = True
-            self.cell_parts = []
-
-    def handle_data(self, data: str) -> None:
-        if self.in_cell:
-            self.cell_parts.append(data)
-
-    def handle_endtag(self, tag: str) -> None:
-        tag = tag.lower()
-        if tag in {"td", "th"} and self.in_cell:
-            value = " ".join(" ".join(self.cell_parts).split())
-            self.row.append(value)
-            self.in_cell = False
-        elif tag == "tr":
-            if self.row:
-                self.rows.append(self.row)
-            self.row = []
-
-
-def fetch_country(code: str) -> tuple[bytes, str]:
-    url = f"{BASE}?{urlencode({'current': code.upper()})}"
-    req = Request(
+def fetch_json(path: str) -> tuple[dict[str, object], bytes, str]:
+    url = f"{BASE}{path}"
+    request = Request(
         url,
         headers={
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml",
-            "Accept-Language": "en-US,en;q=0.9",
+            "User-Agent": "Mozilla/5.0 nuclear-power/1.0 github.com/KAFKA2306/uranium",
+            "Accept": "application/json",
         },
     )
-    with urlopen(req, timeout=60) as response:
-        return response.read(), url
+    with urlopen(request, timeout=60) as response:
+        raw = response.read()
+    return json.loads(raw), raw, url
 
 
-def parse_reactors(html: bytes, country_code: str) -> list[dict[str, object]]:
-    parser = TableParser()
-    parser.feed(html.decode("utf-8", errors="replace"))
-    header_index = None
-    for i, row in enumerate(parser.rows):
-        lowered = [cell.lower() for cell in row]
-        if "name" in lowered and "type" in lowered and "status" in lowered and any("first grid connection" in cell for cell in lowered):
-            header_index = i
-            break
-    if header_index is None:
-        raise ValueError("PRIS reactor table header not found")
-
-    header = [cell.lower() for cell in parser.rows[header_index]]
-    name_i = header.index("name")
-    type_i = header.index("type")
-    status_i = header.index("status")
-    location_i = header.index("location")
-    ref_i = next(i for i, cell in enumerate(header) if "reference unit power" in cell)
-    gross_i = next(i for i, cell in enumerate(header) if "gross electrical capacity" in cell)
-    grid_i = next(i for i, cell in enumerate(header) if "first grid connection" in cell)
-    max_i = max(name_i, type_i, status_i, location_i, ref_i, gross_i, grid_i)
-
-    reactors = []
-    for row in parser.rows[header_index + 1 :]:
-        if len(row) <= max_i:
-            continue
-        name = row[name_i].strip()
-        status = row[status_i].strip()
-        if not name or status not in {"Operational", "Suspended Operation", "Under Construction", "Permanent Shutdown"}:
-            continue
-
-        def number(value: str) -> int | None:
-            cleaned = re.sub(r"[^0-9.]", "", value)
-            return int(float(cleaned)) if cleaned else None
-
-        reactors.append({
-            "country_code": country_code.upper(),
-            "name": name,
-            "reactor_type": row[type_i].strip(),
-            "status": status,
-            "location": row[location_i].strip(),
-            "reference_unit_power_mw": number(row[ref_i]),
-            "gross_electrical_capacity_mw": number(row[gross_i]),
-            "first_grid_connection": row[grid_i].strip() or None,
-        })
-    if not reactors:
-        raise ValueError("PRIS reactor table contained no recognized reactor rows")
-    return reactors
+def normalize_reactor(row: dict[str, object]) -> dict[str, object]:
+    return {
+        "reactor_id": row.get("id"),
+        "country_code": row.get("countryCode"),
+        "country_name": row.get("countryName"),
+        "name": row.get("unitName"),
+        "alternate_name": row.get("alternateName"),
+        "site_id": row.get("siteId"),
+        "site_name": row.get("siteName"),
+        "reactor_type": row.get("typeName"),
+        "type_code": row.get("typeCode"),
+        "status": row.get("statusName"),
+        "status_code": row.get("statusCode"),
+        "model": row.get("model"),
+        "thermal_power_mw": row.get("thermalPower"),
+        "gross_electrical_capacity_mw": row.get("grossElectricalCapacity"),
+        "net_electrical_capacity_mw": row.get("netElectricalCapacity"),
+        "design_net_electrical_capacity_mw": row.get("designNetElectricalCapacity"),
+        "construction_date": row.get("constructionDate"),
+        "first_criticality_date": row.get("criticalityDate"),
+        "first_grid_connection": row.get("gridDate"),
+        "commercial_operation_date": row.get("commercialDate"),
+        "shutdown_date": row.get("shutdownDate"),
+        "latest_suspended_operation_date": row.get("latestSuspendedOperationsDate"),
+        "latest_restart_operation_date": row.get("latestRestartOperationsDate"),
+        "operator": row.get("operatorName"),
+        "owner": row.get("ownerName"),
+        "reactor_supplier": row.get("reactorSupplierName"),
+        "turbine_supplier": row.get("turbineSupplierName"),
+        "information_status_code": row.get("informationStatusCode"),
+        "information_status": row.get("informationStatusDescription"),
+    }
 
 
 def collect(country_codes: list[str]) -> dict[str, object]:
-    sources = []
-    reactors = []
-    for code in country_codes:
-        raw, url = fetch_country(code)
-        country_rows = parse_reactors(raw, code)
-        reactors.extend(country_rows)
-        sources.append({"country_code": code.upper(), "url": url, "sha256": hashlib.sha256(raw).hexdigest(), "reactor_count": len(country_rows)})
+    countries_payload, countries_raw, countries_url = fetch_json(COUNTRIES_PATH)
+    countries = countries_payload.get("items") or []
+    if not isinstance(countries, list):
+        raise ValueError("PRIS countries response has no items list")
+
+    valid_codes = {
+        str(row.get("countryCode", "")).upper()
+        for row in countries
+        if isinstance(row, dict) and row.get("countryCode")
+    }
+    requested = [code.upper() for code in country_codes]
+    unknown = sorted(set(requested) - valid_codes)
+    if unknown:
+        raise ValueError(f"unknown PRIS country codes: {unknown}")
+
+    sources: list[dict[str, object]] = [
+        {
+            "type": "country_registry",
+            "url": countries_url,
+            "sha256": hashlib.sha256(countries_raw).hexdigest(),
+            "country_count": len(countries),
+        }
+    ]
+    reactors: list[dict[str, object]] = []
+
+    for code in requested:
+        path = REACTORS_PATH.format(country_code=code)
+        payload, raw, url = fetch_json(path)
+        rows = payload.get("items") or []
+        if not isinstance(rows, list) or not rows:
+            raise ValueError(f"PRIS returned no reactors for {code}")
+        normalized = [
+            normalize_reactor(row)
+            for row in rows
+            if isinstance(row, dict)
+        ]
+        if not normalized:
+            raise ValueError(f"PRIS returned no valid reactor records for {code}")
+        reactors.extend(normalized)
+        sources.append(
+            {
+                "type": "reactors_by_country",
+                "country_code": code,
+                "url": url,
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "reactor_count": len(normalized),
+            }
+        )
+
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "publisher": "IAEA Power Reactor Information System (PRIS)",
-        "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        "retrieved_at": datetime.now(UTC).isoformat(),
         "sources": sources,
         "reactors": reactors,
     }
@@ -127,12 +124,25 @@ def collect(country_codes: list[str]) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--country", action="append", dest="countries", required=True, help="PRIS country code, e.g. US, CN, JP")
-    parser.add_argument("--output", type=Path, default=Path("output/pris-reactors.json"))
+    parser.add_argument(
+        "--country",
+        action="append",
+        dest="countries",
+        required=True,
+        help="PRIS country code, e.g. US, CN, JP",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("output/pris-reactors.json"),
+    )
     args = parser.parse_args()
     payload = collect(args.countries)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     print(f"wrote {len(payload['reactors'])} reactors -> {args.output}")
 
 
