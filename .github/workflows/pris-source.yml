@@ -21,6 +21,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Unit test
-        run: python -m unittest test_pris.py
+        run: python -c "import test_pris as t; t.test_parse_pris_reactor_table()"
       - name: Fetch current PRIS country pages
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
