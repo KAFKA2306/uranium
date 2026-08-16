@@ -20,28 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Probe public PRIS reactor API
-        run: |
-          python - <<'PY'
-          import json
-          from urllib.request import Request, urlopen
-
-          base = "https://pris-stats.iaea.org"
-          headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
-          for path in ("/country/countries/", "/reactor/reactors-by-code/US"):
-              req = Request(base + path, headers=headers)
-              with urlopen(req, timeout=60) as response:
-                  raw = response.read()
-                  print("API", response.status, response.headers.get("content-type"), path, raw[:5000])
-                  payload = json.loads(raw)
-                  if path.startswith("/reactor/"):
-                      items = payload.get("items") or []
-                      if items:
-                          reactor_id = items[0].get("id")
-                          req2 = Request(base + f"/reactor/reactor-by-id/{reactor_id}", headers=headers)
-                          with urlopen(req2, timeout=60) as response2:
-                              raw2 = response2.read()
-                              print("DETAIL", response2.status, raw2[:8000])
-          PY
-      - name: Compile current collector
-        run: python -m py_compile src/collect_pris.py
+      - name: Unit normalization
+        run: python -c "import test_pris as t; t.test_normalize_current_pris_reactor_record()"
+      - name: Fetch current PRIS US and Japan reactor lists
+        run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
