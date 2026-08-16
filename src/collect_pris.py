@@ -46,7 +46,14 @@ class TableParser(HTMLParser):
 
 def fetch_country(code: str) -> tuple[bytes, str]:
     url = f"{BASE}?{urlencode({'current': code.upper()})}"
-    req = Request(url, headers={"User-Agent": "nuclear-power/1.0 github.com/KAFKA2306/uranium"})
+    req = Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml",
+            "Accept-Language": "en-US,en;q=0.9",
+        },
+    )
     with urlopen(req, timeout=60) as response:
         return response.read(), url
 
@@ -81,9 +88,11 @@ def parse_reactors(html: bytes, country_code: str) -> list[dict[str, object]]:
         status = row[status_i].strip()
         if not name or status not in {"Operational", "Suspended Operation", "Under Construction", "Permanent Shutdown"}:
             continue
+
         def number(value: str) -> int | None:
             cleaned = re.sub(r"[^0-9.]", "", value)
             return int(float(cleaned)) if cleaned else None
+
         reactors.append({
             "country_code": country_code.upper(),
             "name": name,
