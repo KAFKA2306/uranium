@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect PRIS reactor-units call site
+      - name: Trace PRIS country-statistics service
         run: |
           python - <<'PY'
           import re
@@ -38,35 +38,22 @@ jobs:
               req = Request(script_url, headers={"User-Agent": "Mozilla/5.0"})
               with urlopen(req, timeout=60) as response:
                   js = response.read().decode("utf-8", errors="replace")
-              needle = "/countrystatistics/reactor-units"
-              start = 0
-              while True:
-                  index = js.find(needle, start)
-                  if index < 0:
-                      break
-                  print("CALLSITE", js[max(0, index - 1200): index + 1200])
-                  start = index + len(needle)
-          PY
-      - name: Probe candidate PRIS endpoint
-        run: |
-          python - <<'PY'
-          from urllib.error import HTTPError
-          from urllib.request import Request, urlopen
-          urls = [
-              "https://pris.iaea.org/webapi/countrystatistics/reactor-units",
-              "https://pris.iaea.org/webapi/countrystatistics/reactor-units?countryCode=US",
-              "https://pris.iaea.org/webapi/countrystatistics/reactor-units?country=US",
-          ]
-          for url in urls:
-              try:
-                  req = Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
-                  with urlopen(req, timeout=30) as response:
-                      body = response.read()
-                      print("PROBE", response.status, response.headers.get("content-type"), url, body[:2000])
-              except HTTPError as exc:
-                  print("PROBE", exc.code, exc.headers.get("content-type"), url, exc.read()[:1000])
-              except Exception as exc:
-                  print("PROBE_ERROR", url, repr(exc))
+              for needle in (
+                  "getCountryStatistics(){",
+                  "getCountryStatistics(",
+                  "countryStatisticsService",
+                  "getCountries(){",
+                  "reactorList",
+              ):
+                  start = 0
+                  hits = 0
+                  while hits < 10:
+                      index = js.find(needle, start)
+                      if index < 0:
+                          break
+                      print("TRACE", needle, js[max(0, index - 1800): index + 3000])
+                      start = index + len(needle)
+                      hits += 1
           PY
       - name: Compile current collector
         run: python -m py_compile src/collect_pris.py
