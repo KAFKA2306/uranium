@@ -22,7 +22,7 @@ jobs:
           python-version: '3.12'
       - name: Unit test
         run: python -c "import test_pris as t; t.test_parse_pris_reactor_table()"
-      - name: Inspect current PRIS application endpoints
+      - name: Inspect PRIS webapi call sites
         run: |
           python - <<'PY'
           import re
@@ -30,11 +30,9 @@ jobs:
           from urllib.request import Request, urlopen
           from src.collect_pris import fetch_country
 
-          raw, url = fetch_country("US")
+          raw, _ = fetch_country("US")
           html = raw.decode("utf-8", errors="replace")
           scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)', html, flags=re.I)
-          print("page", url, "bytes", len(raw))
-          print("scripts", scripts)
           for src in scripts:
               if "main" not in src.lower():
                   continue
@@ -43,9 +41,9 @@ jobs:
               with urlopen(req, timeout=60) as response:
                   js = response.read().decode("utf-8", errors="replace")
               print("main_js", script_url, "bytes", len(js))
-              candidates = sorted(set(re.findall(r'https?://[^"\' ]+|/[A-Za-z0-9_.?=&/-]*api[A-Za-z0-9_.?=&/-]*', js, flags=re.I)))
-              for candidate in candidates[:100]:
-                  print("candidate", candidate[:500])
+              snippets = sorted(set(re.findall(r'.{0,180}webapi.{0,260}', js, flags=re.I)))
+              for snippet in snippets[:100]:
+                  print("webapi", snippet[:800])
           PY
       - name: Fetch current PRIS country pages
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
