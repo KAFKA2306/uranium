@@ -1,0 +1,26 @@
+name: IAEA PRIS source
+
+on:
+  pull_request:
+    paths:
+      - 'src/collect_pris.py'
+      - 'test_pris.py'
+      - '.github/workflows/pris-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit normalization
+        run: python -c "import test_pris as t; t.test_normalize_current_pris_reactor_record()"
+      - name: Fetch current PRIS US and Japan reactor lists
+        run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
