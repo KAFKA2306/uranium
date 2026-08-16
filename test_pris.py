@@ -1,16 +1,43 @@
-from src.collect_pris import parse_reactors
+from src.collect_pris import normalize_reactor
 
 
-def test_parse_pris_reactor_table():
-    html = b'''<table><tr><th>Name</th><th>Type</th><th>Status</th><th>Location</th><th>Reference Unit Power [MW]</th><th>Gross Electrical Capacity [MW]</th><th>First Grid Connection</th></tr><tr><td>TEST-1</td><td>PWR</td><td>Operational</td><td>TEST SITE</td><td>1000</td><td>1100</td><td>2026-01-02</td></tr></table>'''
-    rows = parse_reactors(html, "XX")
-    assert rows == [{
-        "country_code": "XX",
-        "name": "TEST-1",
-        "reactor_type": "PWR",
-        "status": "Operational",
-        "location": "TEST SITE",
-        "reference_unit_power_mw": 1000,
-        "gross_electrical_capacity_mw": 1100,
-        "first_grid_connection": "2026-01-02",
-    }]
+def test_normalize_current_pris_reactor_record():
+    row = normalize_reactor(
+        {
+            "id": 652,
+            "countryCode": "US",
+            "countryName": "United States of America",
+            "unitName": "ANO-1",
+            "alternateName": "Arkansas Nuclear One, Unit 1",
+            "siteId": 309,
+            "siteName": "ARKANSAS ONE",
+            "typeName": "Pressurized Light-Water-Moderated and Cooled Reactor",
+            "typeCode": "PWR",
+            "statusName": "Operational",
+            "statusCode": "1O",
+            "model": "B&W LLP (DRYAMB)",
+            "thermalPower": 2568,
+            "grossElectricalCapacity": 903,
+            "netElectricalCapacity": 836,
+            "designNetElectricalCapacity": 850,
+            "constructionDate": "1968-10-01T00:00:00",
+            "criticalityDate": "1974-08-06T00:00:00",
+            "gridDate": "1974-08-17T00:00:00",
+            "commercialDate": "1974-12-19T00:00:00",
+            "shutdownDate": None,
+            "operatorName": "Entergy Nuclear Operations, Inc.",
+            "ownerName": "ENTERGY ARKANSAS, INC.",
+            "reactorSupplierName": "BABCOCK & WILCOX CO.",
+            "turbineSupplierName": "WESTINGHOUSE ELECTRIC CORPORATION",
+            "informationStatusCode": "PUB",
+            "informationStatusDescription": "Published",
+        }
+    )
+    assert row["reactor_id"] == 652
+    assert row["name"] == "ANO-1"
+    assert row["status"] == "Operational"
+    assert row["type_code"] == "PWR"
+    assert row["gross_electrical_capacity_mw"] == 903
+    assert row["net_electrical_capacity_mw"] == 836
+    assert row["first_grid_connection"] == "1974-08-17T00:00:00"
+    assert row["shutdown_date"] is None
