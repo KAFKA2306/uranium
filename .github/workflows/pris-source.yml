@@ -22,5 +22,7 @@ jobs:
           python-version: '3.12'
       - name: Unit test
         run: python -c "import test_pris as t; t.test_parse_pris_reactor_table()"
+      - name: Inspect current PRIS source shape
+        run: python -c "from src.collect_pris import fetch_country; raw,url=fetch_country('US'); print(url, len(raw)); text=raw.decode('utf-8', errors='replace'); print(text[:12000])"
       - name: Fetch current PRIS country pages
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
