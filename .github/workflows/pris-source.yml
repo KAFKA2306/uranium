@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Trace PRIS country-statistics service
+      - name: Extract PRIS API base URL
         run: |
           python - <<'PY'
           import re
@@ -38,22 +38,15 @@ jobs:
               req = Request(script_url, headers={"User-Agent": "Mozilla/5.0"})
               with urlopen(req, timeout=60) as response:
                   js = response.read().decode("utf-8", errors="replace")
-              for needle in (
-                  "getCountryStatistics(){",
-                  "getCountryStatistics(",
-                  "countryStatisticsService",
-                  "getCountries(){",
-                  "reactorList",
-              ):
-                  start = 0
-                  hits = 0
-                  while hits < 10:
-                      index = js.find(needle, start)
-                      if index < 0:
-                          break
-                      print("TRACE", needle, js[max(0, index - 1800): index + 3000])
-                      start = index + len(needle)
-                      hits += 1
+              start = 0
+              hits = 0
+              while hits < 20:
+                  index = js.find("apiBaseUrl", start)
+                  if index < 0:
+                      break
+                  print("APIBASE", js[max(0, index - 1200): index + 1600])
+                  start = index + len("apiBaseUrl")
+                  hits += 1
           PY
       - name: Compile current collector
         run: python -m py_compile src/collect_pris.py
