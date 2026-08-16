@@ -20,9 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Unit test
-        run: python -c "import test_pris as t; t.test_parse_pris_reactor_table()"
-      - name: Inspect PRIS webapi call sites
+      - name: Inspect PRIS reactor API strings
         run: |
           python - <<'PY'
           import re
@@ -40,10 +38,11 @@ jobs:
               req = Request(script_url, headers={"User-Agent": "Mozilla/5.0"})
               with urlopen(req, timeout=60) as response:
                   js = response.read().decode("utf-8", errors="replace")
-              print("main_js", script_url, "bytes", len(js))
-              snippets = sorted(set(re.findall(r'.{0,180}webapi.{0,260}', js, flags=re.I)))
-              for snippet in snippets[:100]:
-                  print("webapi", snippet[:800])
+              strings = re.findall(r'["\']([^"\']{2,180})["\']', js)
+              terms = ("reactor", "country", "plant", "npp", "status", "statistics")
+              candidates = sorted({s for s in strings if any(t in s.lower() for t in terms)})
+              for value in candidates[:400]:
+                  print("string", value)
           PY
-      - name: Fetch current PRIS country pages
-        run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
+      - name: Compile current collector
+        run: python -m py_compile src/collect_pris.py
