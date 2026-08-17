@@ -33,7 +33,7 @@
 ### 実行環境
 
 - `requirements.txt`、`pyproject.toml`、lock fileがない
-- testとCIがない
+- 2024年の価格取得・簡易分析script全体には正準なtest suite / CIがありません。一方、`src/collect_pris.py`と`data/official/pris-japan-status-*.json`には`IAEA PRIS source` workflowと`test_pris.py`の限定的な検証があります
 - API responseのschema・rate limit・取得失敗を十分に検証していない
 - 生成済み価格dataの基準日、調整済み価格、通貨、timezoneを保証していない
 
