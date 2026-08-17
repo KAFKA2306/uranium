@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "publisher": "IAEA Power Reactor Information System (PRIS)",
-  "observed_at": "2026-08-17T10:15:41.598076+00:00",
+  "observed_at": "2026-08-17T15:37:18.055554+00:00",
   "event_count": 18,
   "events": [
     {
@@ -12,9 +12,9 @@
       "event_type": "commercial_operation",
       "event_at": "2026-01-01T00:00:00",
       "source_field": "commercial_operation_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 2170,
@@ -24,9 +24,9 @@
       "event_type": "construction_start",
       "event_at": "2026-01-16T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 285,
@@ -36,9 +36,9 @@
       "event_type": "restart_operation",
       "event_at": "2026-01-29T00:00:00",
       "source_field": "latest_restart_operation_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/IN",
-      "source_sha256": "f627ca7ad911eb96d899375dcaa18cefec07ffd5436ff48e8da99a3ad5d1d84d"
+      "source_sha256": "5bde2f06734fc968f8e162f4332d161e744dcf8f470e6ce43aba9f6926cb5dad"
     },
     {
       "reactor_id": 1084,
@@ -48,9 +48,9 @@
       "event_type": "first_criticality",
       "event_at": "2026-02-03T00:00:00",
       "source_field": "first_criticality_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 1076,
@@ -60,9 +60,9 @@
       "event_type": "construction_start",
       "event_at": "2026-02-05T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/HU",
-      "source_sha256": "94c3ac992384497fb5984ed67d807608ccd663449dca2ad0c35a5279e62e4fac"
+      "source_sha256": "4e4571b22e36484deecf93bfd8cb9b63bfe053271d3a8adba6050004777b16f9"
     },
     {
       "reactor_id": 1084,
@@ -72,9 +72,9 @@
       "event_type": "first_grid_connection",
       "event_at": "2026-02-13T00:00:00",
       "source_field": "first_grid_connection",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 1094,
@@ -84,9 +84,9 @@
       "event_type": "first_criticality",
       "event_at": "2026-02-14T00:00:00",
       "source_field": "first_criticality_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 293,
@@ -96,9 +96,9 @@
       "event_type": "construction_start",
       "event_at": "2026-03-01T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/IN",
-      "source_sha256": "f627ca7ad911eb96d899375dcaa18cefec07ffd5436ff48e8da99a3ad5d1d84d"
+      "source_sha256": "5bde2f06734fc968f8e162f4332d161e744dcf8f470e6ce43aba9f6926cb5dad"
     },
     {
       "reactor_id": 294,
@@ -108,9 +108,9 @@
       "event_type": "construction_start",
       "event_at": "2026-03-01T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/IN",
-      "source_sha256": "f627ca7ad911eb96d899375dcaa18cefec07ffd5436ff48e8da99a3ad5d1d84d"
+      "source_sha256": "5bde2f06734fc968f8e162f4332d161e744dcf8f470e6ce43aba9f6926cb5dad"
     },
     {
       "reactor_id": 1094,
@@ -120,9 +120,9 @@
       "event_type": "first_grid_connection",
       "event_at": "2026-03-12T00:00:00",
       "source_field": "first_grid_connection",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 2208,
@@ -132,9 +132,9 @@
       "event_type": "construction_start",
       "event_at": "2026-04-04T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 1084,
@@ -144,9 +144,9 @@
       "event_type": "commercial_operation",
       "event_at": "2026-04-19T00:00:00",
       "source_field": "commercial_operation_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 2193,
@@ -156,9 +156,9 @@
       "event_type": "construction_start",
       "event_at": "2026-04-22T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CA",
-      "source_sha256": "d643dc14a67078c6461aea61c89cfaf161f8a96cb276e237e76f400efdc94f7d"
+      "source_sha256": "039164b3bd4a55aa782a7c646259dc3e399b9da54b4a9efa293589918bf3cf8d"
     },
     {
       "reactor_id": 903,
@@ -168,9 +168,9 @@
       "event_type": "commercial_operation",
       "event_at": "2026-05-01T00:00:00",
       "source_field": "commercial_operation_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/RU",
-      "source_sha256": "c11a88eacc4c5adb8b93fa3734789ff07d7bb8bb2856864ce4605c8540f1f69a"
+      "source_sha256": "354fdf3c481cea2a686fe8dd3a017991efeb5ef9fb7bbdb6900f018980c31532"
     },
     {
       "reactor_id": 2143,
@@ -180,9 +180,9 @@
       "event_type": "construction_start",
       "event_at": "2026-05-10T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     },
     {
       "reactor_id": 2207,
@@ -192,9 +192,9 @@
       "event_type": "construction_start",
       "event_at": "2026-05-29T00:00:00",
       "source_field": "construction_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/KR",
-      "source_sha256": "476575ede33a626ee1c47c2edbfc11a61f2d34ebf169708b8e4f198daa49944a"
+      "source_sha256": "35be8431cd312ebcb263a67a5a38881d15b65104abb100111b1476018cc42b0e"
     },
     {
       "reactor_id": 296,
@@ -204,9 +204,9 @@
       "event_type": "restart_operation",
       "event_at": "2026-06-06T00:00:00",
       "source_field": "latest_restart_operation_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/IN",
-      "source_sha256": "f627ca7ad911eb96d899375dcaa18cefec07ffd5436ff48e8da99a3ad5d1d84d"
+      "source_sha256": "5bde2f06734fc968f8e162f4332d161e744dcf8f470e6ce43aba9f6926cb5dad"
     },
     {
       "reactor_id": 1091,
@@ -216,9 +216,9 @@
       "event_type": "first_criticality",
       "event_at": "2026-06-25T00:00:00",
       "source_field": "first_criticality_date",
-      "observed_at": "2026-08-17T10:15:41.598076+00:00",
+      "observed_at": "2026-08-17T15:37:18.055554+00:00",
       "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/CN",
-      "source_sha256": "b9f84761889f24625dd601524f58d32a8c5119faa8df7d4372f2953886332d06"
+      "source_sha256": "df622aec44729bf3dead444e49126aae63ed4bf8ce5d698ea7f06316a93a04fb"
     }
   ]
 }
