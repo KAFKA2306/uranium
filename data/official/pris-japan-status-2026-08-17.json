@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "publisher": "IAEA Power Reactor Information System (PRIS)",
+  "retrieved_at": "2026-08-17T04:09:13.318587+00:00",
+  "country_code": "JP",
+  "country_name": "Japan",
+  "source": {
+    "url": "https://pris-stats.iaea.org/reactor/reactors-by-code/JP",
+    "sha256": "8d9b07785793373c44b4d6a1cd7d7f999f1d1e95cd40a6423f623a09ebedcdc8",
+    "reactor_count": 62
+  },
+  "status_aggregates": [
+    {
+      "status": "Operational",
+      "reactor_count": 14,
+      "net_electrical_capacity_mw": 12631
+    },
+    {
+      "status": "Suspended Operation",
+      "reactor_count": 19,
+      "net_electrical_capacity_mw": 19048
+    },
+    {
+      "status": "Under Construction",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 2653
+    },
+    {
+      "status": "Permanent Shutdown",
+      "reactor_count": 27,
+      "net_electrical_capacity_mw": 17119
+    }
+  ]
+}
