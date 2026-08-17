@@ -3,6 +3,7 @@ name: IAEA PRIS source
 on:
   pull_request:
     paths:
+      - 'data/official/pris-japan-status-*.json'
       - 'src/collect_pris.py'
       - 'test_pris.py'
       - '.github/workflows/pris-source.yml'
@@ -22,18 +23,7 @@ jobs:
           python-version: '3.12'
       - name: Unit normalization
         run: python -c "import test_pris as t; t.test_normalize_current_pris_reactor_record()"
+      - name: Verify persisted Japan status aggregate
+        run: python -c "import test_pris as t; t.test_japan_status_snapshot()"
       - name: Fetch current PRIS US and Japan reactor lists
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
-      - name: Report Japan snapshot for verification
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          payload = json.loads(Path('/tmp/pris-reactors.json').read_text())
-          japan = {
-              **{key: payload[key] for key in ('schema_version', 'publisher', 'retrieved_at')},
-              'sources': [source for source in payload['sources'] if source.get('type') == 'country_registry' or source.get('country_code') == 'JP'],
-              'reactors': [reactor for reactor in payload['reactors'] if reactor.get('country_code') == 'JP'],
-          }
-          print('PRIS_JAPAN_SNAPSHOT=' + json.dumps(japan, ensure_ascii=False, separators=(',', ':')))
-          PY
