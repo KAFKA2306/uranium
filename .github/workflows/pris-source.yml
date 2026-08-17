@@ -1,29 +1,62 @@
 name: IAEA PRIS source
 
 on:
-  pull_request:
+  push:
+    branches: [main]
     paths:
-      - 'data/official/pris-japan-status-*.json'
       - 'src/collect_pris.py'
+      - 'src/build_pris_views.py'
       - 'test_pris.py'
       - '.github/workflows/pris-source.yml'
+  pull_request:
+    paths:
+      - 'src/collect_pris.py'
+      - 'src/build_pris_views.py'
+      - 'test_pris.py'
+      - '.github/workflows/pris-source.yml'
+  schedule:
+    - cron: '15 15 * * 1'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Unit normalization
-        run: python -c "import test_pris as t; t.test_normalize_current_pris_reactor_record()"
-      - name: Verify persisted Japan status aggregate
-        run: python -c "import test_pris as t; t.test_japan_status_snapshot()"
-      - name: Fetch current PRIS US and Japan reactor lists
+      - name: Unit tests
+        run: |
+          python - <<'PY'
+          import test_pris as t
+          t.test_normalize_current_pris_reactor_record()
+          t.test_japan_status_snapshot()
+          t.test_views_keep_explicit_2026_events_and_separate_capacity_statuses()
+          print('3 tests passed')
+          PY
+      - name: Verify current PRIS US and Japan reactor lists
+        if: github.event_name == 'pull_request'
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
+      - name: Collect every PRIS country
+        if: github.event_name != 'pull_request'
+        run: python src/collect_pris.py
+      - name: Build reactor, event and capacity views
+        if: github.event_name != 'pull_request'
+        run: python src/build_pris_views.py
+      - name: Commit changed PRIS evidence
+        if: github.event_name != 'pull_request'
+        run: |
+          if test -z "$(git status --porcelain -- data/official/pris-reactors api/v1/nuclear-power)"; then
+            echo 'No PRIS evidence changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/official/pris-reactors api/v1/nuclear-power
+          git commit -m 'data: update IAEA PRIS reactor evidence'
+          git push
