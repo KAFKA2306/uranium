@@ -1,5 +1,7 @@
 # uranium — ウラン・原子力関連銘柄の2024年研究snapshot
 
+[![IAEA PRIS source](https://github.com/KAFKA2306/uranium/actions/workflows/pris-source.yml/badge.svg)](https://github.com/KAFKA2306/uranium/actions/workflows/pris-source.yml)
+
 > **状態: 過去snapshot / 自動更新なし**  
 > このリポジトリは、2024年10月に作成されたウラン、原子力、SMR、データセンター電力需要に関係する銘柄候補と、価格取得・簡易分析scriptのsnapshotです。現在の銘柄構成、企業関係、価格、投資判断を示すものではありません。
 
