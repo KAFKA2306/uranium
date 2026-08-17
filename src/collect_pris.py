@@ -29,7 +29,7 @@ def fetch_json(path: str) -> tuple[dict[str, object], bytes, str]:
     return json.loads(raw), raw, url
 
 
-def normalize_reactor(row: dict[str, object]) -> dict[str, object]:
+def normalize_reactor(row: dict[str, object], source_url: str, source_sha256: str) -> dict[str, object]:
     return {
         "reactor_id": row.get("id"),
         "country_code": row.get("countryCode"),
@@ -60,22 +60,26 @@ def normalize_reactor(row: dict[str, object]) -> dict[str, object]:
         "turbine_supplier": row.get("turbineSupplierName"),
         "information_status_code": row.get("informationStatusCode"),
         "information_status": row.get("informationStatusDescription"),
+        "source_url": source_url,
+        "source_sha256": source_sha256,
     }
 
 
-def collect(country_codes: list[str]) -> dict[str, object]:
+def collect(country_codes: list[str] | None = None) -> dict[str, object]:
     countries_payload, countries_raw, countries_url = fetch_json(COUNTRIES_PATH)
     countries = countries_payload.get("items") or []
     if not isinstance(countries, list):
         raise ValueError("PRIS countries response has no items list")
 
-    valid_codes = {
-        str(row.get("countryCode", "")).upper()
-        for row in countries
-        if isinstance(row, dict) and row.get("countryCode")
-    }
-    requested = [code.upper() for code in country_codes]
-    unknown = sorted(set(requested) - valid_codes)
+    valid_codes = sorted(
+        {
+            str(row.get("countryCode", "")).upper()
+            for row in countries
+            if isinstance(row, dict) and row.get("countryCode")
+        }
+    )
+    requested = valid_codes if country_codes is None else [code.upper() for code in country_codes]
+    unknown = sorted(set(requested) - set(valid_codes))
     if unknown:
         raise ValueError(f"unknown PRIS country codes: {unknown}")
 
@@ -95,8 +99,9 @@ def collect(country_codes: list[str]) -> dict[str, object]:
         rows = payload.get("items") or []
         if not isinstance(rows, list) or not rows:
             raise ValueError(f"PRIS returned no reactors for {code}")
+        digest = hashlib.sha256(raw).hexdigest()
         normalized = [
-            normalize_reactor(row)
+            normalize_reactor(row, url, digest)
             for row in rows
             if isinstance(row, dict)
         ]
@@ -108,18 +113,42 @@ def collect(country_codes: list[str]) -> dict[str, object]:
                 "type": "reactors_by_country",
                 "country_code": code,
                 "url": url,
-                "sha256": hashlib.sha256(raw).hexdigest(),
+                "sha256": digest,
                 "reactor_count": len(normalized),
             }
         )
 
+    ids = [row["reactor_id"] for row in reactors]
+    if any(value is None for value in ids) or len(ids) != len(set(ids)):
+        raise ValueError("PRIS reactor IDs are missing or duplicated")
+
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "publisher": "IAEA Power Reactor Information System (PRIS)",
         "retrieved_at": datetime.now(UTC).isoformat(),
+        "country_count": len(requested),
+        "reactor_count": len(reactors),
         "sources": sources,
         "reactors": reactors,
     }
+
+
+def fingerprint(payload: dict[str, object]) -> str:
+    source_hashes = sorted(
+        f"{source.get('country_code', 'registry')}:{source['sha256']}"
+        for source in payload["sources"]
+    )
+    return hashlib.sha256("\n".join(source_hashes).encode()).hexdigest()[:16]
+
+
+def write_snapshot(payload: dict[str, object], output_dir: Path) -> Path:
+    date_part = str(payload["retrieved_at"])[:10]
+    path = output_dir / date_part / f"{fingerprint(payload)}.json"
+    if path.exists():
+        return path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return path
 
 
 def main() -> None:
@@ -128,22 +157,28 @@ def main() -> None:
         "--country",
         action="append",
         dest="countries",
-        required=True,
-        help="PRIS country code, e.g. US, CN, JP",
+        help="PRIS country code; omit to collect every country returned by PRIS",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("output/pris-reactors.json"),
+        help="single JSON output path for verification",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("data/official/pris-reactors"),
+        help="append-only snapshot directory",
     )
     args = parser.parse_args()
     payload = collect(args.countries)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    print(f"wrote {len(payload['reactors'])} reactors -> {args.output}")
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        path = args.output
+    else:
+        path = write_snapshot(payload, args.output_dir)
+    print(f"wrote {payload['reactor_count']} reactors across {payload['country_count']} countries -> {path}")
 
 
 if __name__ == "__main__":
