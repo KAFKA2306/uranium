@@ -1,0 +1,65 @@
+{
+  "observed_at": "2026-08-17T10:15:41.598076+00:00",
+  "groups": [
+    {
+      "type_code": "BWR",
+      "reactor_count": 118,
+      "net_electrical_capacity_mw": 95641.0
+    },
+    {
+      "type_code": "FBR",
+      "reactor_count": 14,
+      "net_electrical_capacity_mw": 5384.0
+    },
+    {
+      "type_code": "GCR",
+      "reactor_count": 52,
+      "net_electrical_capacity_mw": 14961.0
+    },
+    {
+      "type_code": "HTGR",
+      "reactor_count": 5,
+      "net_electrical_capacity_mw": 829.0
+    },
+    {
+      "type_code": "HWGCR",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 269.0
+    },
+    {
+      "type_code": "HWLWR",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 398.0
+    },
+    {
+      "type_code": "LWGR",
+      "reactor_count": 24,
+      "net_electrical_capacity_mw": 16357.0
+    },
+    {
+      "type_code": "OMR",
+      "reactor_count": 1,
+      "net_electrical_capacity_mw": 12.0
+    },
+    {
+      "type_code": "PHWR",
+      "reactor_count": 63,
+      "net_electrical_capacity_mw": 30282.0
+    },
+    {
+      "type_code": "PWR",
+      "reactor_count": 454,
+      "net_electrical_capacity_mw": 427341.0
+    },
+    {
+      "type_code": "SGHWR",
+      "reactor_count": 1,
+      "net_electrical_capacity_mw": 92.0
+    },
+    {
+      "type_code": "SGR",
+      "reactor_count": 1,
+      "net_electrical_capacity_mw": 75.0
+    }
+  ]
+}

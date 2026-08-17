@@ -1,0 +1,195 @@
+{
+  "observed_at": "2026-08-17T10:15:41.598076+00:00",
+  "groups": [
+    {
+      "country_code": "AE",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 5348.0
+    },
+    {
+      "country_code": "AM",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 792.0
+    },
+    {
+      "country_code": "AR",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 1656.0
+    },
+    {
+      "country_code": "BD",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 2160.0
+    },
+    {
+      "country_code": "BE",
+      "reactor_count": 8,
+      "net_electrical_capacity_mw": 5932.0
+    },
+    {
+      "country_code": "BG",
+      "reactor_count": 6,
+      "net_electrical_capacity_mw": 3638.0
+    },
+    {
+      "country_code": "BR",
+      "reactor_count": 3,
+      "net_electrical_capacity_mw": 3224.0
+    },
+    {
+      "country_code": "BY",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 2220.0
+    },
+    {
+      "country_code": "CA",
+      "reactor_count": 26,
+      "net_electrical_capacity_mw": 16187.0
+    },
+    {
+      "country_code": "CH",
+      "reactor_count": 6,
+      "net_electrical_capacity_mw": 3352.0
+    },
+    {
+      "country_code": "CN",
+      "reactor_count": 103,
+      "net_electrical_capacity_mw": 103725.0
+    },
+    {
+      "country_code": "CZ",
+      "reactor_count": 6,
+      "net_electrical_capacity_mw": 3972.0
+    },
+    {
+      "country_code": "DE",
+      "reactor_count": 36,
+      "net_electrical_capacity_mw": 26375.0
+    },
+    {
+      "country_code": "EG",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 4400.0
+    },
+    {
+      "country_code": "ES",
+      "reactor_count": 10,
+      "net_electrical_capacity_mw": 8190.0
+    },
+    {
+      "country_code": "FI",
+      "reactor_count": 5,
+      "net_electrical_capacity_mw": 4369.0
+    },
+    {
+      "country_code": "FR",
+      "reactor_count": 71,
+      "net_electrical_capacity_mw": 68549.0
+    },
+    {
+      "country_code": "GB",
+      "reactor_count": 47,
+      "net_electrical_capacity_mw": 16902.0
+    },
+    {
+      "country_code": "HU",
+      "reactor_count": 5,
+      "net_electrical_capacity_mw": 3101.0
+    },
+    {
+      "country_code": "IN",
+      "reactor_count": 33,
+      "net_electrical_capacity_mw": 14097.0
+    },
+    {
+      "country_code": "IR",
+      "reactor_count": 3,
+      "net_electrical_capacity_mw": 2863.0
+    },
+    {
+      "country_code": "IT",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 1423.0
+    },
+    {
+      "country_code": "JP",
+      "reactor_count": 62,
+      "net_electrical_capacity_mw": 51451.0
+    },
+    {
+      "country_code": "KR",
+      "reactor_count": 32,
+      "net_electrical_capacity_mw": 32206.0
+    },
+    {
+      "country_code": "KZ",
+      "reactor_count": 1,
+      "net_electrical_capacity_mw": 52.0
+    },
+    {
+      "country_code": "LT",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 2370.0
+    },
+    {
+      "country_code": "MX",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 1552.0
+    },
+    {
+      "country_code": "NL",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 537.0
+    },
+    {
+      "country_code": "PK",
+      "reactor_count": 8,
+      "net_electrical_capacity_mw": 4469.0
+    },
+    {
+      "country_code": "RO",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 1300.0
+    },
+    {
+      "country_code": "RU",
+      "reactor_count": 53,
+      "net_electrical_capacity_mw": 37884.0
+    },
+    {
+      "country_code": "SE",
+      "reactor_count": 13,
+      "net_electrical_capacity_mw": 11065.0
+    },
+    {
+      "country_code": "SI",
+      "reactor_count": 1,
+      "net_electrical_capacity_mw": 696.0
+    },
+    {
+      "country_code": "SK",
+      "reactor_count": 9,
+      "net_electrical_capacity_mw": 3655.0
+    },
+    {
+      "country_code": "TR",
+      "reactor_count": 4,
+      "net_electrical_capacity_mw": 4456.0
+    },
+    {
+      "country_code": "UA",
+      "reactor_count": 21,
+      "net_electrical_capacity_mw": 18692.0
+    },
+    {
+      "country_code": "US",
+      "reactor_count": 135,
+      "net_electrical_capacity_mw": 116927.0
+    },
+    {
+      "country_code": "ZA",
+      "reactor_count": 2,
+      "net_electrical_capacity_mw": 1854.0
+    }
+  ]
+}
