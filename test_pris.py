@@ -1,4 +1,9 @@
+import json
+from pathlib import Path
+
 from src.collect_pris import normalize_reactor
+
+ROOT = Path(__file__).resolve().parent
 
 
 def test_normalize_current_pris_reactor_record():
@@ -41,3 +46,28 @@ def test_normalize_current_pris_reactor_record():
     assert row["net_electrical_capacity_mw"] == 836
     assert row["first_grid_connection"] == "1974-08-17T00:00:00"
     assert row["shutdown_date"] is None
+
+
+def test_japan_status_snapshot():
+    path = ROOT / "data" / "official" / "pris-japan-status-2026-08-17.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+
+    assert payload["publisher"] == "IAEA Power Reactor Information System (PRIS)"
+    assert payload["country_code"] == "JP"
+    assert payload["source"] == {
+        "url": "https://pris-stats.iaea.org/reactor/reactors-by-code/JP",
+        "sha256": "8d9b07785793373c44b4d6a1cd7d7f999f1d1e95cd40a6423f623a09ebedcdc8",
+        "reactor_count": 62,
+    }
+
+    by_status = {
+        item["status"]: (item["reactor_count"], item["net_electrical_capacity_mw"])
+        for item in payload["status_aggregates"]
+    }
+    assert by_status == {
+        "Operational": (14, 12631),
+        "Suspended Operation": (19, 19048),
+        "Under Construction": (2, 2653),
+        "Permanent Shutdown": (27, 17119),
+    }
+    assert sum(count for count, _ in by_status.values()) == 62
