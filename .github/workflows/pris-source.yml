@@ -26,19 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Unit tests
-        run: |
-          python - <<'PY'
-          import test_pris as t
-          t.test_normalize_current_pris_reactor_record()
-          t.test_japan_status_snapshot()
-          t.test_views_keep_explicit_2026_events_and_separate_capacity_statuses()
-          print('3 tests passed')
-          PY
+        run: python -m unittest -v test_pris
       - name: Verify current PRIS US and Japan reactor lists
         if: github.event_name == 'pull_request'
         run: python src/collect_pris.py --country US --country JP --output /tmp/pris-reactors.json
