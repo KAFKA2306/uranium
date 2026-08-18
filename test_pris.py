@@ -1,4 +1,5 @@
 import json
+import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -112,3 +113,14 @@ def test_views_keep_explicit_2026_events_and_separate_capacity_statuses():
         assert events["events"][0]["source_url"].startswith("https://pris-stats.iaea.org/")
         assert capacity["operating"]["net_electrical_capacity_mw"] == 0.0
         assert capacity["under_construction"]["net_electrical_capacity_mw"] == 1000.0
+
+
+def load_tests(loader, tests, pattern):
+    suite = unittest.TestSuite()
+    for test in (
+        test_normalize_current_pris_reactor_record,
+        test_japan_status_snapshot,
+        test_views_keep_explicit_2026_events_and_separate_capacity_statuses,
+    ):
+        suite.addTest(unittest.FunctionTestCase(test))
+    return suite
