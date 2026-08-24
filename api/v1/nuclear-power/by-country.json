@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-08-18T20:35:33.778220+00:00",
+  "observed_at": "2026-08-24T15:53:54.345248+00:00",
   "groups": [
     {
       "country_code": "AE",
@@ -159,7 +159,7 @@
     {
       "country_code": "SE",
       "reactor_count": 13,
-      "net_electrical_capacity_mw": 11065.0
+      "net_electrical_capacity_mw": 11067.0
     },
     {
       "country_code": "SI",
