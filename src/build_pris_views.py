@@ -6,6 +6,7 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 EVENT_FIELDS = (
     ("construction_start", "construction_date"),
@@ -134,12 +135,37 @@ def build(snapshot_root: Path, output_dir: Path) -> None:
         (output_dir / name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def verify(snapshot_root: Path, canonical_dir: Path) -> None:
+    """Fail when tracked API views are not the deterministic projection of raw snapshots."""
+    with TemporaryDirectory() as tmp:
+        rebuilt_dir = Path(tmp) / "nuclear-power"
+        build(snapshot_root, rebuilt_dir)
+        rebuilt = {path.name: path.read_bytes() for path in rebuilt_dir.glob("*.json")}
+        canonical = {path.name: path.read_bytes() for path in canonical_dir.glob("*.json")}
+
+    changed = sorted(
+        name
+        for name in set(rebuilt) | set(canonical)
+        if rebuilt.get(name) != canonical.get(name)
+    )
+    if changed:
+        raise ValueError("tracked PRIS views are stale: " + ", ".join(changed))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--snapshot-dir", type=Path, default=Path("data/official/pris-reactors"))
     parser.add_argument("--output-dir", type=Path, default=Path("api/v1/nuclear-power"))
+    parser.add_argument(
+        "--verify-against",
+        type=Path,
+        help="Rebuild in a temporary directory and fail if JSON views differ from this directory.",
+    )
     args = parser.parse_args()
-    build(args.snapshot_dir, args.output_dir)
+    if args.verify_against:
+        verify(args.snapshot_dir, args.verify_against)
+    else:
+        build(args.snapshot_dir, args.output_dir)
 
 
 if __name__ == "__main__":
