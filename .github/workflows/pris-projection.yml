@@ -1,0 +1,36 @@
+name: PRIS projection integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/official/pris-reactors/**'
+      - 'api/v1/nuclear-power/**'
+      - 'src/build_pris_views.py'
+      - 'test_pris.py'
+      - '.github/workflows/pris-projection.yml'
+  pull_request:
+    paths:
+      - 'data/official/pris-reactors/**'
+      - 'api/v1/nuclear-power/**'
+      - 'src/build_pris_views.py'
+      - 'test_pris.py'
+      - '.github/workflows/pris-projection.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest -v test_pris
+      - name: Verify tracked API is the deterministic raw projection
+        run: python src/build_pris_views.py --verify-against api/v1/nuclear-power

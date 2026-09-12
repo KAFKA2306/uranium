@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from src.build_pris_views import build
+from src.build_pris_views import build, load_latest, verify
 from src.collect_pris import normalize_reactor
 
 ROOT = Path(__file__).resolve().parent
@@ -115,12 +115,66 @@ def test_views_keep_explicit_2026_events_and_separate_capacity_statuses():
         assert capacity["under_construction"]["net_electrical_capacity_mw"] == 1000.0
 
 
+def test_latest_snapshot_and_projection_gate_fail_on_raw_only_change():
+    def snapshot(retrieved_at: str, capacity_mw: int) -> dict:
+        return {
+            "schema_version": 3,
+            "publisher": "IAEA Power Reactor Information System (PRIS)",
+            "retrieved_at": retrieved_at,
+            "country_count": 1,
+            "reactor_count": 1,
+            "sources": [],
+            "reactors": [
+                {
+                    "reactor_id": 1,
+                    "country_code": "XX",
+                    "country_name": "Example",
+                    "name": "EXAMPLE-1",
+                    "type_code": "PWR",
+                    "status": "Operational",
+                    "net_electrical_capacity_mw": capacity_mw,
+                    "construction_date": None,
+                    "first_criticality_date": None,
+                    "first_grid_connection": None,
+                    "commercial_operation_date": None,
+                    "latest_suspended_operation_date": None,
+                    "latest_restart_operation_date": None,
+                    "shutdown_date": None,
+                    "source_url": "https://pris-stats.iaea.org/reactor/reactors-by-code/XX",
+                    "source_sha256": "c" * 64,
+                }
+            ],
+        }
+
+    with TemporaryDirectory() as tmp:
+        root = Path(tmp) / "snapshots"
+        older = root / "2026-08-17" / "fixture.json"
+        newer = root / "2026-09-07" / "fixture.json"
+        older.parent.mkdir(parents=True)
+        newer.parent.mkdir(parents=True)
+        older.write_text(json.dumps(snapshot("2026-08-17T10:00:00+00:00", 900)), encoding="utf-8")
+        newer.write_text(json.dumps(snapshot("2026-09-07T10:00:00+00:00", 1000)), encoding="utf-8")
+
+        latest_path, latest = load_latest(root)
+        assert latest_path == newer
+        assert latest["retrieved_at"] == "2026-09-07T10:00:00+00:00"
+
+        canonical = Path(tmp) / "canonical"
+        build(root, canonical)
+        verify(root, canonical)
+
+        newer.write_text(json.dumps(snapshot("2026-09-07T10:00:00+00:00", 1100)), encoding="utf-8")
+        with unittest.TestCase().assertRaisesRegex(ValueError, "tracked PRIS views are stale"):
+            verify(root, canonical)
+
+
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     for test in (
         test_normalize_current_pris_reactor_record,
         test_japan_status_snapshot,
         test_views_keep_explicit_2026_events_and_separate_capacity_statuses,
+        test_latest_snapshot_and_projection_gate_fail_on_raw_only_change,
     ):
         suite.addTest(unittest.FunctionTestCase(test))
     return suite
