@@ -1,9 +1,9 @@
 {
-  "observed_at": "2026-11-02T23:06:07.660944+00:00",
+  "observed_at": "2026-11-09T23:46:13.746993+00:00",
   "operating": {
     "status": "Operational",
-    "reactor_count": 417,
-    "net_electrical_capacity_mw": 379611.0
+    "reactor_count": 418,
+    "net_electrical_capacity_mw": 380051.0
   },
   "suspended_operation": {
     "status": "Suspended Operation",
@@ -12,8 +12,8 @@
   },
   "under_construction": {
     "status": "Under Construction",
-    "reactor_count": 78,
-    "net_electrical_capacity_mw": 81349.0
+    "reactor_count": 77,
+    "net_electrical_capacity_mw": 80909.0
   },
   "permanent_shutdown": {
     "status": "Permanent Shutdown",
